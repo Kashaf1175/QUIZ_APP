@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { BookOpen, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const API_URL = "http://localhost:5000/api";
 
-const QuizList = () => {
+const QuizList = ({ refreshFlag }) => {
   const [quizzes, setQuizzes] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch quizzes created by admin from backend
+  // Fetch quizzes logic as a function
+  const fetchQuizzes = useCallback(() => {
     fetch(`${API_URL}/quizzes`)
       .then((res) => res.json())
       .then((data) => {
-        // Filter quizzes where createdBy.role === 'admin'
         const adminQuizzes = data.filter(
           (quiz) => quiz.createdBy && quiz.createdBy.role === "admin"
         );
@@ -21,6 +20,11 @@ const QuizList = () => {
       })
       .catch(() => setQuizzes([]));
   }, []);
+
+  // Fetch on mount and when refreshFlag changes
+  useEffect(() => {
+    fetchQuizzes();
+  }, [fetchQuizzes, refreshFlag]);
 
   return (
     <div className="max-w-3xl mx-auto mt-10 bg-white rounded-lg shadow p-8">
@@ -43,7 +47,6 @@ const QuizList = () => {
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>
                     <Trophy className="inline h-4 w-4 mr-1 text-yellow-500" />
-                    {/* You can fetch and display bestScore if available */}
                     Best Score: {quiz.bestScore ?? "N/A"}%
                   </span>
                   <span>Attempts: {quiz.attempts ?? 0}</span>
