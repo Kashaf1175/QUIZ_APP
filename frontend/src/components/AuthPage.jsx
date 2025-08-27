@@ -40,20 +40,15 @@ const AuthPage = ({ isRegister = false }) => {
     if (!validateForm()) return;
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
       if (isRegister) {
-        register(formData);
+        await register(formData);
       } else {
-        login({
-          id: Date.now(),
-          name: formData.name || formData.email.split('@')[0],
-          email: formData.email,
-          role: formData.role
-        });
+        await login({ email: formData.email, password: formData.password });
       }
-      navigate('/dashboard'); // <-- Go to dashboard after login/signup
+      // After login/register, redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
-      setErrors({ submit: 'Authentication failed. Please try again.' });
+      setErrors({ submit: error.message || 'Authentication failed. Please try again.' });
     } finally {
       setIsLoading(false);
     }

@@ -1,21 +1,25 @@
-import React, { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import { createQuiz } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { PlusCircle } from "lucide-react";
 
-const CreateQuiz = () => {
+const API_URL = "http://localhost:5000/api";
+
+const EditQuiz = () => {
+  const { id } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [quiz, setQuiz] = useState({
-    title: "",
-    description: "",
-    questions: [
-      { question: "", options: ["", "", "", ""], answer: 0 }
-    ],
-  });
-  const [success, setSuccess] = useState(false);
+  const [quiz, setQuiz] = useState(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  // Fetch quiz data
+  useEffect(() => {
+    fetch(`${API_URL}/quizzes/${id}`)
+      .then((res) => res.json())
+      .then((data) => setQuiz(data))
+      .catch(() => setError("Failed to load quiz"));
+  }, [id]);
 
   const handleQuizChange = (e) => {
     setQuiz({ ...quiz, [e.target.name]: e.target.value });
@@ -51,10 +55,12 @@ const CreateQuiz = () => {
     e.preventDefault();
     setError("");
     try {
-      await createQuiz({
-        ...quiz,
-        createdBy: user?.id || user?._id, // Make sure user id is available
+      const res = await fetch(`${API_URL}/quizzes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(quiz),
       });
+      if (!res.ok) throw new Error("Failed to update quiz");
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -65,15 +71,23 @@ const CreateQuiz = () => {
     }
   };
 
+  if (!quiz) {
+    return (
+      <div className="max-w-2xl mx-auto mt-10 text-center text-gray-500">
+        {error ? error : "Loading quiz..."}
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto mt-10 bg-white rounded-lg shadow p-8">
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
         <PlusCircle className="h-7 w-7 text-blue-500" />
-        Create New Quiz
+        Edit Quiz
       </h2>
       {success && (
         <div className="bg-green-100 text-green-700 p-2 rounded mb-4 text-center">
-          Quiz created successfully! Redirecting...
+          Quiz updated successfully! Redirecting...
         </div>
       )}
       {error && (
@@ -165,11 +179,11 @@ const CreateQuiz = () => {
           type="submit"
           className="w-full bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 font-semibold"
         >
-          Create Quiz
+          Update Quiz
         </button>
       </form>
     </div>
-    );
+  );
 };
 
-export default CreateQuiz;
+export default EditQuiz;

@@ -4,13 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "jest",
+    "seed": "node scripts/seed.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "quiz",
+    "authentication",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "Sri",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

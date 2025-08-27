@@ -8,6 +8,8 @@ import Profile from './components/Profile';
 import QuizList from './components/QuizList';
 import CreateQuiz from './components/CreateQuiz';
 import MyQuizzes from './components/MyQuizzes';
+import EditQuiz from './components/EditQuiz';
+import StartQuiz from './components/StartQuiz';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -78,6 +80,15 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+            <Route
+              path="/edit-quiz/:id"
+              element={
+                <ProtectedRoute>
+                  <EditQuiz />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/start-quiz/:id" element={<StartQuiz />} />
             <Route path="/" element={<Navigate to="/auth" />} />
           </Routes>
         </AppLayout>

@@ -1,36 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { BookOpen, Trophy } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const mockQuizzes = [
-  {
-    id: 1,
-    title: "General Knowledge",
-    description: "Test your general knowledge skills.",
-    attempts: 5,
-    bestScore: 90,
-  },
-  {
-    id: 2,
-    title: "Mathematics Basics",
-    description: "A quiz on basic math concepts.",
-    attempts: 3,
-    bestScore: 80,
-  },
-  {
-    id: 3,
-    title: "Science Facts",
-    description: "How much do you know about science?",
-    attempts: 2,
-    bestScore: 70,
-  },
-];
+const API_URL = "http://localhost:5000/api";
 
 const QuizList = () => {
   const [quizzes, setQuizzes] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Replace this with an API call in production
-    setQuizzes(mockQuizzes);
+    // Fetch quizzes created by admin from backend
+    fetch(`${API_URL}/quizzes`)
+      .then((res) => res.json())
+      .then((data) => {
+        // Filter quizzes where createdBy.role === 'admin'
+        const adminQuizzes = data.filter(
+          (quiz) => quiz.createdBy && quiz.createdBy.role === "admin"
+        );
+        setQuizzes(adminQuizzes);
+      })
+      .catch(() => setQuizzes([]));
   }, []);
 
   return (
@@ -45,7 +34,7 @@ const QuizList = () => {
         <ul className="space-y-6">
           {quizzes.map((quiz) => (
             <li
-              key={quiz.id}
+              key={quiz._id}
               className="border rounded-lg p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
             >
               <div>
@@ -54,14 +43,16 @@ const QuizList = () => {
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>
                     <Trophy className="inline h-4 w-4 mr-1 text-yellow-500" />
-                    Best Score: {quiz.bestScore}%
+                    {/* You can fetch and display bestScore if available */}
+                    Best Score: {quiz.bestScore ?? "N/A"}%
                   </span>
-                  <span>
-                    Attempts: {quiz.attempts}
-                  </span>
+                  <span>Attempts: {quiz.attempts ?? 0}</span>
                 </div>
               </div>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+              <button
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+                onClick={() => navigate(`/start-quiz/${quiz._id}`)}
+              >
                 Start Quiz
               </button>
             </li>
