@@ -19,7 +19,7 @@ const Profile = () => {
     e.preventDefault();
     // Here you would send updated profile info to your backend
     setEditing(false);
-  };
+};
 
   if (!user) return null;
 

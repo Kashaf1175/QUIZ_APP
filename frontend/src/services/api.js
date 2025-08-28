@@ -1,27 +1,3 @@
-// const API_URL = "http://localhost:5000/api";
-
-// export async function registerUser(data) {
-//   console.log("Registering with:", data); // Add this
-//   const res = await fetch(`${API_URL}/auth/register`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(data),
-//   });
-//   const result = await res.json();
-//   if (!res.ok) throw new Error(result.error || "Registration failed");
-//   return result;
-// }
-
-// export async function loginUser(data) {
-//   const res = await fetch(`${API_URL}/auth/login`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(data),
-//   });
-//   const result = await res.json();
-//   if (!res.ok) throw new Error(result.error || "Login failed");
-//   return result;
-// }
 
 const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
